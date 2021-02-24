@@ -57,7 +57,7 @@ com.auth0samples://YOUR_DOMAIN/android/com.auth0samples/callback
 7. Scroll down and click **Save Changes**.
 
 
-## 3. Run The App
+## 3. Configure Graphql
 Redux slices are designed to call a graphql backend - this boilerplate calls a Hasura graphql endpoint to make CRUD calls easy
 
 - Edit GRAPHQL_ENDPOINT section of `utils/config.js` (presumably start with DEV)
