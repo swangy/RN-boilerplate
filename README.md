@@ -11,7 +11,7 @@ The complete guide to getting started with [react-native-auth0](https://github.c
 Clone the repository and install the dependencies with [Yarn](https://yarnpkg.com):
 
 ```bash
-git clone this project
+git clone git@github.com:swangy/RN-boilerplate.git
 cd react-native auth0 redux template
 yarn install
 ```
