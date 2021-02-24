@@ -1,5 +1,5 @@
 const DEV_CONFIG = {
-    GRAPHQL_ENDPOINT: 'https://XXXXX.com',
+    GRAPHQL_ENDPOINT: 'https://XXXXX.com/v1/graphql',
     AUTH_CONFIG: {
         clientId: 'XXXXX',
         audience: 'XXXXX',
@@ -8,7 +8,7 @@ const DEV_CONFIG = {
 };
 
 const STAGING_CONFIG = {
-    GRAPHQL_ENDPOINT: 'https://XXXXX.com',
+    GRAPHQL_ENDPOINT: 'https://XXXXX.com/v1/graphql',
     AUTH_CONFIG: {
         clientId: 'XXXXX',
         audience: 'xxxxxxxx',
@@ -17,7 +17,7 @@ const STAGING_CONFIG = {
 };
 
 const PRODUCTION_CONFIG = {
-    GRAPHQL_ENDPOINT: 'https://XXXXXX.com',
+    GRAPHQL_ENDPOINT: 'https://XXXXXX.com/v1/graphql',
     AUTH_CONFIG: {
         clientId: 'XXXXX',
         audience: 'xxxxxxxx',

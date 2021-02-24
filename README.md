@@ -2,7 +2,7 @@
 https://stackoverflow.com/questions/38713240/unrecognized-font-family-ionicons
 
 
-# Auth0 React Native Samples - Login
+# Auth0 React Native Boilerplate using reduxjs toolkit slices for state control, and Apollo to call graphql backend 
 
 The complete guide to getting started with [react-native-auth0](https://github.com/auth0/react-native-auth0) is our [React Native QuickStart](https://auth0.com/docs/quickstart/native/react-native/00-login).
 
@@ -11,8 +11,8 @@ The complete guide to getting started with [react-native-auth0](https://github.c
 Clone the repository and install the dependencies with [Yarn](https://yarnpkg.com):
 
 ```bash
-git clone git@github.com:auth0-samples/auth0-react-native-sample.git
-cd auth0-react-native-sample
+git clone this project
+cd react-native auth0 redux template
 yarn install
 ```
 
@@ -25,7 +25,7 @@ cd ios
 pod install
 ```
 
-You should see the `A0Auth0` pod being installed and linked to the sample app.
+You should see the `A0Auth0` pod being installed and linked to the boilerplate app.
 
 ### Android applications only
 
@@ -42,10 +42,10 @@ The `applicationId` will get auto-completed dynamically.
 
 ## 2. Configure Auth0
 
-1. Copy the `app/auth0-configuration.js.example` in this sample to `app/auth0-configuration.js`.
+1. Copy the `utils/config.sample.js` in this sample to `utils/config.js`.
 2. Open your [Applications in the Auth0 dashboard](https://manage.auth0.com/#/applications).
 3. Select your existing Application from the list or click **Create Application** at the top to create a new Application of type **Native**.
-4. On the **Settings** tab for the Application, copy the "Client ID" and "Domain" values and paste them into the `app/auth0-configuration.js` file created above.
+4. On the **Settings** tab for the Application, copy the "Client ID" and "Domain" values and paste them into the AUTH_CONFIG section of the `utils/config.js` file created above. (presumably start with DEV)
 5. In the **Allowed Callback URLs** field, paste in the text below and replace `YOUR_DOMAIN` with the **Domain** from above. These URLs are required for the authentication result to be redirected from the browser to the app:
 
 ```
@@ -56,7 +56,12 @@ com.auth0samples://YOUR_DOMAIN/android/com.auth0samples/callback
 6. Add the same values to the **Allowed Logout URLs** field as well. These are required for the browser to redirect back to the app after the user logs out.
 7. Scroll down and click **Save Changes**.
 
+
 ## 3. Run The App
+Redux slices are designed to call a graphql backend - this boilerplate calls a Hasura graphql endpoint to make CRUD calls easy
+
+- Edit GRAPHQL_ENDPOINT section of `utils/config.js` (presumably start with DEV)
+## 4. Run The App
 
 Run your app on an emulator, simulator, or your own connected device.
 
