@@ -59,8 +59,8 @@ export const slice = createSlice({
         SInfo.setItem("accessToken", credentials.accessToken, {});
         SInfo.setItem("idToken", credentials.idToken, {});
 
-        dispatch(updateAccessToken(credentials.accessToken));
-        dispatch(updateIdToken(credentials.idToken));
+        state.accessToken = credentials.accessToken;
+        state.idToken = credentials.idToken;
         RNRestart.Restart();
       }
     },
@@ -103,24 +103,27 @@ export const slice = createSlice({
 
 ///////// ASYNC reducers ////////
 
-export const isAuthenticated = () => async dispatch => {
+export const isAuthenticated = payload => async dispatch => {
   const accessToken = await SInfo.getItem("accessToken", {});
   const idToken = await SInfo.getItem("idToken", {});
   dispatch(userLoading());
 
+  console.log('Authenticated: ', accessToken);
   // https://blog.pusher.com/react-native-auth0/
   // By default, Auth0’s access tokens are only valid for 24 hours after it was first received when the user logged in. If this happens, we can request a new access token by using the refresh token which we also receive when the user logged in
+
   if (accessToken) {
     try {
       const userInfo = await auth0.auth.userInfo({ token: accessToken });
 
       if (userInfo) {
-        console.log('Authenticated: ', userInfo);
         dispatch(updateAccessToken(accessToken));
       }
     } catch (err) {
-      console.log('Authentication failed, renewing token')
-      dispatch(renewIdToken());
+      SInfo.deleteItem("accessToken", {});
+      SInfo.deleteItem("idToken", {});
+      console.log('Authentication failed, renewing token', err)
+      dispatch(renewIdToken(accessToken));
     }
   }
 
