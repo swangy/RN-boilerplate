@@ -35,7 +35,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
                     operation.setContext({
                         headers: {
                             ...oldHeaders,
-                            authorization: 'Bearer' + renewIdToken(),
+                            authorization: 'Bearer ' + renewIdToken(),
                         },
                     });
                     // retry the request, returning the new observable
