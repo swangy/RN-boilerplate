@@ -29,6 +29,7 @@
     "react-native-restart": "0.0.20",
     "react-native-sensitive-info": "5.5.8",
     "react-navigation": "^4.4.4",
+    "react-native-easy-grid": "^0.2.2",
     "react-redux": "^7.2.2",
     "redux-thunk": "^2.3.0",
     "react-native-uuid": "^1.4.9"
