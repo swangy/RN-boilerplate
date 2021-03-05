@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import promiseToObservable from './promiseToObservable';
 
 import { GRAPHQL_ENDPOINT, AUTH_CONFIG } from './config';
 import SInfo from "react-native-sensitive-info";
@@ -31,15 +32,20 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
         for (let err of graphQLErrors) {
             switch (err.extensions.code) {
                 case 'invalid-jwt':
-                    const oldHeaders = operation.getContext().headers;
-                    operation.setContext({
-                        headers: {
-                            ...oldHeaders,
-                            authorization: 'Bearer ' + renewIdToken(),
-                        },
+                    // https://github.com/apollographql/apollo-link/issues/646#issuecomment-423279220
+                    return promiseToObservable(renewIdToken()).flatMap((value) => {
+                        operation.setContext(({ headers = {} }) => ({
+                            headers: {
+                                // re-add old headers
+                                ...headers,
+                                Authorization: `Bearer ${value}`
+                            }
+                        }));
+
+                        console.log('RETRYING: ', JSON.stringify(operation.getContext().headers.authorization))
+                        return forward(operation)
                     });
-                    // retry the request, returning the new observable
-                    return forward(operation);
+
                     break;
 
                 case 'UNAUTHENTICATED':
@@ -69,6 +75,6 @@ const renewIdToken = async () => {
 }
 
 export const apolloClient = new ApolloClient({
-    link: from([authLink, errorLink, httpLink]),
+    link: from([errorLink, authLink, httpLink]),
     cache: new InMemoryCache()
 });
