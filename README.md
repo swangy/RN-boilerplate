@@ -1,3 +1,6 @@
+# Error with "This copy of libswiftCore.dylib requires an OS version prior to 12.2.0."
+https://stackoverflow.com/questions/55361057/this-copy-of-libswiftcore-dylib-requires-an-os-version-prior-to-12-2-0
+
 # RN NativeBase issues
 https://stackoverflow.com/questions/38713240/unrecognized-font-family-ionicons
 
