@@ -1,6 +1,9 @@
 # RN NativeBase issues
 https://stackoverflow.com/questions/38713240/unrecognized-font-family-ionicons
 
+# Lottie compilation issues
+It works after I set "Don't Dead Strip Inits and Terms" to "Yes"
+https://github.com/react-native-community/upgrade-support/issues/25
 
 # Auth0 React Native Boilerplate using reduxjs toolkit slices for state control, and Apollo to call graphql backend 
 
