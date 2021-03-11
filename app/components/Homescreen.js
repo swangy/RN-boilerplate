@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { View, Button, Text, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
 
 export default HomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
