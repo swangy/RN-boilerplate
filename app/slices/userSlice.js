@@ -62,7 +62,12 @@ export const slice = createSlice({
         state.accessToken = credentials.accessToken;
         state.idToken = credentials.idToken;
         RNRestart.Restart();
+      } else {
+        console.log('id Token renewal failed', credentials)
+        state.accessToken = null;
+        state.idToken = null;
       }
+
     },
     upsertToHasura: (state, action) => {
       // auth0Id is taken from JWT when upsert occurs on backend
@@ -122,6 +127,8 @@ export const isAuthenticated = payload => async dispatch => {
     } catch (err) {
       SInfo.deleteItem("accessToken", {});
       SInfo.deleteItem("idToken", {});
+      dispatch(updateAccessToken(null));
+      dispatch(updateIdToken(null));
       console.log('Authentication failed, renewing token', err)
       dispatch(renewIdToken(accessToken));
     }
