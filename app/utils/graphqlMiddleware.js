@@ -38,7 +38,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
                             headers: {
                                 // re-add old headers
                                 ...headers,
-                                Authorization: `Bearer ${value}`
+                                authorization: `Bearer ${value}`
                             }
                         }));
 
