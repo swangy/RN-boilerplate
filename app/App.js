@@ -53,10 +53,17 @@ const App = () => {
                     activeTintColor: 'tomato',
                     inactiveTintColor: 'gray',
                 }}
-            >
-                <Tab.Screen name="Home" component={HomeScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
-                <Tab.Screen name={idToken ? "Logout" : "Login"} component={LoginOut} />
+            >{idToken ?
+                <>
+                    <Tab.Screen name="Home" component={HomeScreen} />
+                    <Tab.Screen name="Settings" component={SettingsScreen} />
+                    <Tab.Screen name="Logout" component={LoginOut} />
+                </>
+                : <>
+                    <Tab.Screen name="Login" component={LoginOut} />
+
+                </>
+                }
             </Tab.Navigator>
         </NavigationContainer>
     );

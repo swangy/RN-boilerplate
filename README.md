@@ -8,6 +8,15 @@ https://stackoverflow.com/questions/38713240/unrecognized-font-family-ionicons
 It works after I set "Don't Dead Strip Inits and Terms" to "Yes"
 https://github.com/react-native-community/upgrade-support/issues/25
 
+# error React Native 
+React Native CLI uses autolinking for native dependencies, but the following modules are linked manually: 
+  - react-native-vector-icons (to unlink run: "react-native unlink react-native-vector-icons")
+
+ solution:
+make sure you're on node v12 (nvm)
+npx react-native upgrade
+delete ios/build directory
+
 # Auth0 React Native Boilerplate using reduxjs toolkit slices for state control, and Apollo to call graphql backend 
 
 The complete guide to getting started with [react-native-auth0](https://github.com/auth0/react-native-auth0) is our [React Native QuickStart](https://auth0.com/docs/quickstart/native/react-native/00-login).
