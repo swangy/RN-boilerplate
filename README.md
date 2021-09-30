@@ -12,10 +12,42 @@ https://github.com/react-native-community/upgrade-support/issues/25
 React Native CLI uses autolinking for native dependencies, but the following modules are linked manually: 
   - react-native-vector-icons (to unlink run: "react-native unlink react-native-vector-icons")
 
- solution:
+ solution: https://stackoverflow.com/questions/66799274/no-podspec-found-for-fbreactnativespec-in-node-modules-react-native-librar
 make sure you're on node v12 (nvm)
 npx react-native upgrade
 delete ios/build directory
+
+```bash
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '10.0'
+
+target '< APP NAME >' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
+
+  target 'APP NAME TESTS' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  use_flipper!()
+
+  post_install do |installer|
+    react_native_post_install(installer)
+  end
+end
+```
 
 # Auth0 React Native Boilerplate using reduxjs toolkit slices for state control, and Apollo to call graphql backend 
 
