@@ -18,33 +18,29 @@ npx react-native upgrade
 delete ios/build directory
 
 ```bash
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-
-platform :ios, '10.0'
-
-target '< APP NAME >' do
-  config = use_native_modules!
-
-  use_react_native!(
-    :path => config[:reactNativePath],
-    # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false
-  )
-
-  target 'APP NAME TESTS' do
-    inherit! :complete
-    # Pods for testing
-  end
-
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  # use_flipper!({'Flipper' => '0.92.0', 'Flipper-Folly' => '2.6.9'})
+  use_flipper!({ 'Flipper' => flipperkit_version, 'Flipper-Folly' => '2.6.9', 'Flipper-RSocket' => '1.4.3', 'Flipper-DoubleConversion' => '3.1.7', 'Flipper-Glog' => '0.3.9', 'Flipper-PeerTalk' => '0.0.4' })
+
 
   post_install do |installer|
-    react_native_post_install(installer)
+  # Run the React-Native post install
+  react_native_post_install(installer)
+
+  # Reconfigure the pods to match the iOS version we're targetting
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      case target.name
+        when 'RCT-Folly'
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+        else
+          config.build_settings.delete('IPHONEOS_DEPLOYMENT_TARGET')
+        end
+      end
+    end
   end
 end
 ```
