@@ -15,7 +15,7 @@ const auth0 = new Auth0(AUTH_CONFIG);
 export const slice = createSlice({
   name: 'user',
   initialState: {
-    loading: 'idle',
+    loading: 'pending',
     networkError: null,
     accessToken: null,
     idToken: null,
@@ -34,11 +34,13 @@ export const slice = createSlice({
         state.loading = 'pending';
       }
     },
-    userReceived(state, action) {
-      state.user = action.payload;
+    userIdle(state) {
       if (state.loading === 'pending') {
         state.loading = 'idle';
       }
+    },
+    userReceived(state, action) {
+      state.user = action.payload;
     },
     updateUserList(state, action) {
       if (state.loading === 'pending') {
@@ -73,6 +75,7 @@ export const slice = createSlice({
       // auth0Id is taken from JWT when upsert occurs on backend
       // action.payload must be in JWT format
       const decoded = action.payload && jwt_decode(action.payload);
+      userReceived(decoded);
 
       apolloClient.mutate({
         mutation: gql`
@@ -107,11 +110,10 @@ export const slice = createSlice({
 });
 
 ///////// ASYNC reducers ////////
-
 export const isAuthenticated = payload => async dispatch => {
+  dispatch(userLoading());
   const accessToken = await SInfo.getItem("accessToken", {});
   const idToken = await SInfo.getItem("idToken", {});
-  dispatch(userLoading());
 
   console.log('Authenticated: ', accessToken);
   // https://blog.pusher.com/react-native-auth0/
@@ -123,6 +125,8 @@ export const isAuthenticated = payload => async dispatch => {
 
       if (userInfo) {
         dispatch(updateAccessToken(accessToken));
+        dispatch(userReceived(userInfo));
+        console.log('User profile: ', userInfo);
       }
     } catch (err) {
       SInfo.deleteItem("accessToken", {});
@@ -141,6 +145,8 @@ export const isAuthenticated = payload => async dispatch => {
     // else
     dispatch(updateIdToken(idToken));
   }
+
+  dispatch(userIdle());
 }
 
 export const getUserProfile = (accessToken) => async dispatch => {
@@ -240,6 +246,7 @@ export const {
   updateIdToken,
   upsertToHasura,
   userLoading,
+  userIdle,
   userReceived,
   updateUserList,
   networkError,
