@@ -1,3 +1,7 @@
+# Upgrading to react-native 0.67
+gives stupid pod install errors about OpenSSL incorrect versioning
+stay on 0.66.4
+
 # Error with "This copy of libswiftCore.dylib requires an OS version prior to 12.2.0."
 https://stackoverflow.com/questions/55361057/this-copy-of-libswiftcore-dylib-requires-an-os-version-prior-to-12-2-0
 
