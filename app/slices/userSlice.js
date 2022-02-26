@@ -19,7 +19,8 @@ export const slice = createSlice({
     networkError: null,
     accessToken: null,
     idToken: null,
-    user: null
+    user: null,
+    companyId: null
   },
   // Only synchronous functions go in here
   reducers: {
@@ -53,6 +54,9 @@ export const slice = createSlice({
     updateIdToken(state, action) {
       state.idToken = action.payload
     },
+    updateCompany(state, action) {
+      state.companyId = action.payload === '' ? null : action.payload;
+    },
     renewIdToken(state, action) {
       const refreshToken = SInfo.getItem("refreshToken", {});
       const credentials = auth0.auth.refreshToken({ refreshToken });
@@ -70,15 +74,20 @@ export const slice = createSlice({
         state.idToken = null;
       }
 
-    },
-    upsertToHasura: (state, action) => {
-      // auth0Id is taken from JWT when upsert occurs on backend
-      // action.payload must be in JWT format
-      const decoded = action.payload && jwt_decode(action.payload);
-      userReceived(decoded);
+    }
+  },
+});
 
-      apolloClient.mutate({
-        mutation: gql`
+
+///////// ASYNC reducers ////////
+export const upsertToHasura = (jwt) => async dispatch => {
+  // auth0Id is taken from JWT when upsert occurs on backend
+  // action.payload must be in JWT format
+  const decoded = jwt && jwt_decode(jwt);
+  dispatch(userReceived(decoded));
+
+  const response = await apolloClient.mutate({
+    mutation: gql`
           mutation upsert($avatar:String, $email:String, $name:String) {
             insert_concussion_users(
               objects: {
@@ -92,28 +101,36 @@ export const slice = createSlice({
                 update_columns: [updated_at, user_avatar]
               }) {
               affected_rows
+              returning {
+                fkCompanyId
+              }
             }
           }`,
-        variables: {
-          "avatar": decoded.picture,
-          "email": decoded.email,
-          "name": decoded.name
-        },
-        fetchPolicy: 'no-cache',
-      }).then((response) => {
-        console.log('Successfully upserted: ', response.data.insert_concussion_users.affected_rows);
-      }).catch(err => {
-        console.log('Error upserting: :', err);
-      });
+    variables: {
+      "avatar": decoded.picture,
+      "email": decoded.email,
+      "name": decoded.name
     },
-  },
-});
+    fetchPolicy: 'no-cache',
+  });
 
-///////// ASYNC reducers ////////
+  // set user's company on login, to allow enabling privileges
+  const companyId = response.data.insert_concussion_users.returning[0].fkCompanyId;
+  SInfo.setItem("companyId", companyId, {});
+  dispatch(updateCompany(companyId));
+
+  console.log('Successfully upserted: ',
+    response.data.insert_concussion_users.affected_rows,
+    decoded,
+    companyId
+  );
+};
+
 export const isAuthenticated = payload => async dispatch => {
   dispatch(userLoading());
   const accessToken = await SInfo.getItem("accessToken", {});
   const idToken = await SInfo.getItem("idToken", {});
+  const companyId = await SInfo.getItem("companyId", {});
 
   console.log('Authenticated: ', accessToken);
   // https://blog.pusher.com/react-native-auth0/
@@ -126,13 +143,17 @@ export const isAuthenticated = payload => async dispatch => {
       if (userInfo) {
         dispatch(updateAccessToken(accessToken));
         dispatch(userReceived(userInfo));
-        console.log('User profile: ', userInfo);
+        dispatch(updateCompany(companyId))
+        console.log('(isAuthenticated) User profile: ', userInfo);
+        console.log('(isAuthenticated) companyId: ', companyId);
       }
     } catch (err) {
       SInfo.deleteItem("accessToken", {});
       SInfo.deleteItem("idToken", {});
+      SInfo.deleteItem("companyId", {});
       dispatch(updateAccessToken(null));
       dispatch(updateIdToken(null));
+      dispatch(updateCompany(null))
       console.log('Authentication failed, renewing token', err)
       dispatch(renewIdToken(accessToken));
     }
@@ -152,7 +173,7 @@ export const isAuthenticated = payload => async dispatch => {
 export const getUserProfile = (accessToken) => async dispatch => {
   try {
     const userInfo = await auth0.auth.userInfo({ token: accessToken });
-    console.log('User profile: ', userInfo);
+    console.log('GetUserProfile: ', userInfo);
     return userInfo;
   } catch (err) {
     console.log('Error retrieving uuser profile: ', err);
@@ -178,18 +199,22 @@ export const handleLoginPress = () => async dispatch => {
 
 export const handleLogoutPress = payload => async dispatch => {
   auth0.webAuth.clearSession().catch(error => console.log(error));
+
   dispatch(updateAccessToken(null));
   dispatch(updateIdToken(null));
+  dispatch(updateCompany(null))
 
   SInfo.deleteItem("accessToken", {});
   SInfo.deleteItem("idToken", {});
   SInfo.deleteItem("refreshToken", {});
+  SInfo.deleteItem("companyId", {});
 }
 
 // export const updateUser = () => async dispatch => {
 //   dispatch(usersLoading());
 //   const response = await apolloClient.mutate({
-//     mutation: gql`mutation MyMutation($user: concussion_users_set_input) {
+//     mutation: gql`
+//      mutation MyMutation($user: concussion_users_set_input) {
 //       update_concussion_users
 //       (where: {},
 //         _set: $user) {
@@ -240,11 +265,12 @@ export const selectLoading = state => state.user.loading;
 export const selectUser = state => state.user.user;
 export const selectAccessToken = state => state.user.accessToken;
 export const selectIdToken = state => state.user.idToken;
+export const selectCompanyId = state => state.user.companyId;
 export const {
   renewIdToken,
   updateAccessToken,
   updateIdToken,
-  upsertToHasura,
+  updateCompany,
   userLoading,
   userIdle,
   userReceived,
