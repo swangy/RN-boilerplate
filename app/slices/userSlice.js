@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import SInfo from "react-native-sensitive-info";
 import Auth0 from 'react-native-auth0';
 import RNRestart from "react-native-restart";
-import { AUTH_CONFIG } from '../utils/config';
+import { AUTH_CONFIG } from '../utils/config.env';
 
 import gql from 'graphql-tag';
 import { apolloClient } from '../utils/graphqlMiddleware';

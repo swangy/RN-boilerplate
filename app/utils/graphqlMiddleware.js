@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import promiseToObservable from './promiseToObservable';
 
-import { GRAPHQL_ENDPOINT, AUTH_CONFIG } from './config';
+import { GRAPHQL_ENDPOINT, AUTH_CONFIG } from './config.env';
 import SInfo from "react-native-sensitive-info";
 import Auth0 from 'react-native-auth0';
 
