@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaView, Text } from 'react-native';
 import LoginOut from './components/logInOut';
 import HomeScreen from './components/Homescreen';
 import SettingsScreen from './components/SettingsScreen';
@@ -12,6 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { selectIdToken, isAuthenticated, selectLoading } from './slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import SplashScreen from "react-native-splash-screen";
+import Loading from './components/Loading';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -50,8 +50,8 @@ const App = () => {
         dispatch(isAuthenticated());
     }, []);
 
-    if (loading === 'pending') { return <SafeAreaView><Text>Loading...</Text></SafeAreaView> }
 
+    if (loading === 'pending') return <Loading />
     return (
         <NavigationContainer>
             <Tab.Navigator
@@ -70,13 +70,19 @@ const App = () => {
                 })}
             >{idToken ?
                 <>
-                    <Tab.Screen name="Home" component={HomeScreen} />
+                    <Tab.Screen name="Home">
+                        {() => (
+                            <HomeStack.Navigator screenOptions={{ headerShown: false }} >
+                                <HomeStack.Screen name="Day Schedule" component={HomeScreen} />
+                                <HomeStack.Screen name="Night Schedule" component={HomeScreen} />
+                            </HomeStack.Navigator>
+                        )}
+                    </Tab.Screen>
                     <Tab.Screen name="Settings" component={SettingsScreen} />
                     <Tab.Screen name="Logout" component={LoginOut} />
                 </>
                 : <>
                     <Tab.Screen name="Login" component={LoginOut} />
-
                 </>
                 }
             </Tab.Navigator>
