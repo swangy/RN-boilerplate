@@ -48,6 +48,15 @@ React Native CLI uses autolinking for native dependencies, but the following mod
   end
 end
 ```
+# Bitrise gotchas
+only 1 provisioning profile so it doesnt get confused
+export  certs and profiles with codesigndoc, select app-store for release
+bash -l -c "$(curl -sfL https://raw.githubusercontent.com/bitrise-tools/codesigndoc/master/_scripts/install_wrap.sh)"
+
+cache push paths:
+/Users/vagrant/git/ios/
+/Users/vagrant/git/node_modules
+/Users/vagrant/Library
 
 # Auth0 React Native Boilerplate using reduxjs toolkit slices for state control, and Apollo to call graphql backend 
 The complete guide to getting started with [react-native-auth0](https://github.com/auth0/react-native-auth0) is our [React Native QuickStart](https://auth0.com/docs/quickstart/native/react-native/00-login).
