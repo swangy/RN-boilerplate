@@ -5,6 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "iosRelease": "react-native run-ios --configuration Release",
     "device": "react-native run-ios --device",
     "deviceRelease": "react-native run-ios --configuration Release --device",
     "start": "react-native start",
@@ -19,6 +20,7 @@
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "6.2.5",
     "@reduxjs/toolkit": "^1.7.1",
+    "@gorhom/bottom-sheet": "^4.3.0",
     "graphql": "^16.2.0",
     "graphql-tag": "^2.12.5",
     "jwt-decode": "3.1.2",

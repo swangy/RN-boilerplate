@@ -48,6 +48,17 @@ React Native CLI uses autolinking for native dependencies, but the following mod
   end
 end
 ```
+
+#Bitrise Prepare Env
+Add "Run custom script" step in workflow to include:
+```
+echo "GRAPHQL_ENDPOINT_ENV_PROD=$GRAPHQL_ENDPOINT" >> $BITRISE_SOURCE_DIR/.env
+echo "AUTH_CONFIG_CLIENTID_ENV_PROD=$AUTH_CONFIG_CLIENTID" >> $BITRISE_SOURCE_DIR/.env
+echo "AUDIENCE_PROD=$AUDIENCE" >> $BITRISE_SOURCE_DIR/.env
+echo "DOMAIN_PROD=$DOMAIN" >> $BITRISE_SOURCE_DIR/.env
+cat $BITRISE_SOURCE_DIR/.env
+```
+
 # Bitrise gotchas
 only 1 provisioning profile so it doesnt get confused
 export  certs and profiles with codesigndoc, select app-store for release
